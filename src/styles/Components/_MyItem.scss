@@ -1,0 +1,17 @@
+.list-group-item:hover .hide{
+    visibility: visible;
+}
+
+.hide {
+    visibility: hidden;
+    text-decoration: none;
+    color: rosybrown;
+    font-weight: 400;
+}
+
+.hide:hover {
+    text-decoration: none;
+    color: darkred;
+    font-weight: 700;
+    cursor: pointer;
+}

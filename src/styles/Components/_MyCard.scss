@@ -1,0 +1,44 @@
+.form-control {
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 0px;
+}
+
+.card {
+    border-radius: 0rem;
+}
+
+.form-control:focus{
+    box-shadow: none;
+}
+
+.card-footer {
+    background-color: #fff; 
+}
+
+.text-muted {
+    color: #c7c8ca !important;
+}
+
+.paperDesign {
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    width: 30rem;
+    height: 4px;
+    margin: auto;
+}
+
+#design1 {
+
+    width: 29.5rem;
+}
+
+#design2 {
+    width: 29rem;
+    box-shadow: 5px 2px 7px rgba(0, 0, 0, 0.4);
+}
+
+.boxShadowCard {
+    width: 30rem;
+    box-shadow: 5px -2px 7px rgba(0, 0, 0, 0.2), -5px 0px 7px rgba(0, 0, 0, 0.2);
+}
