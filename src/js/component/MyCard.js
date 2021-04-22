@@ -15,7 +15,6 @@ import {
 
 function MyCard() {
 	let [list, setList] = useState([]);
-	//let [idCounter, setIdCounter] = useState(1);
 
 	const user = "DaniilTorpedoKvyat";
 	const baseUrl = "https://assets.breatheco.de/apis/fake/todos/user/" + user;
@@ -58,7 +57,7 @@ function MyCard() {
 				const body = await response.json();
 				setList(body);
 			} else {
-				createUser();
+				await createUser();
 				const response = await fetchTodosList();
 				const body = await response.json();
 				setList(body);
@@ -68,15 +67,20 @@ function MyCard() {
 		}
 	}
 
-	async function updateInfoInAPI() {
+	async function updateInfoInAPI(auxList) {
 		try {
 			const response = await fetch(baseUrl, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json"
 				},
-				body: JSON.stringify(list)
+				body: JSON.stringify(auxList)
 			});
+			if (response.ok) {
+				getListFromAPI();
+			} else {
+				return null;
+			}
 		} catch (error) {
 			return null;
 		}
@@ -87,8 +91,9 @@ function MyCard() {
 			e.key != "Enter" ||
 			/^\s+$/g.test(e.target.value) ||
 			e.target.value == ""
-		)
+		) {
 			return null;
+		}
 
 		// When user click Enter, add a new Todo to the state/element "list"
 		// {
@@ -103,18 +108,23 @@ function MyCard() {
 
 		let auxList = [...list];
 		auxList.push(newTodo);
-		setList(auxList);
+
+		updateInfoInAPI(auxList);
 
 		e.target.value = "";
 	}
 
 	function handleClickDelete(id) {
 		let auxList = list.filter((element, index) => index != id);
-		setList(auxList);
+		if (!auxList.length) {
+			auxList.push({ label: "sample task", done: false });
+		}
+
+		updateInfoInAPI(auxList);
 	}
 
 	function handleClickDeleteAll() {
-		setList([{ label: "All Delleted", done: false }]);
+		setList([{ label: "sample task", done: false }]);
 	}
 
 	useEffect(() => {
@@ -122,10 +132,10 @@ function MyCard() {
 		getListFromAPI();
 	}, []);
 
-	useEffect(() => {
-		// Make a Put Method to API because the state/element "list" changed
-		updateInfoInAPI();
-	}, [list]);
+	// useEffect(() => {
+	// 	// Make a Put Method to API because the state/element "list" changed
+	// 	updateInfoInAPI();
+	// }, [list]);
 
 	return (
 		<>
@@ -175,7 +185,5 @@ function MyCard() {
 		</>
 	);
 }
-
-MyCard.propTypes = {};
 
 export { MyCard };
