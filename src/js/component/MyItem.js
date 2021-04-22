@@ -21,7 +21,7 @@ function MyItem(props) {
 						className="d-flex align-items-center justify-content-center p-0">
 						<a
 							className="hide"
-							onClick={() => handleClick(props.func)}>
+							onClick={() => handleClick(props.handlerDelete)}>
 							X
 						</a>
 					</Col>
@@ -32,9 +32,9 @@ function MyItem(props) {
 }
 
 MyItem.propTypes = {
-	id: PropTypes.string,
+	id: PropTypes.number,
 	element: PropTypes.string,
-	func: PropTypes.func
+	handlerDelete: PropTypes.func
 };
 
 export { MyItem };

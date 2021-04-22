@@ -1,35 +1,131 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 import { MyItem } from "./MyItem";
 
-import { Card, Form, ListGroup } from "react-bootstrap";
+import {
+	Container,
+	Row,
+	Col,
+	Button,
+	Card,
+	Form,
+	ListGroup
+} from "react-bootstrap";
 
 function MyCard() {
 	let [list, setList] = useState([]);
-	let [idCounter, setIdCounter] = useState(1);
+	//let [idCounter, setIdCounter] = useState(1);
+
+	const user = "DaniilTorpedoKvyat";
+	const baseUrl = "https://assets.breatheco.de/apis/fake/todos/user/" + user;
+
+	async function createUser() {
+		// Create the user if the "getListFromAPI" return a response with status 404
+		await (async () => {
+			try {
+				const response = await fetch(baseUrl, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify([])
+				});
+			} catch (error) {
+				return null;
+			}
+		})();
+	}
+
+	async function fetchTodosList() {
+		// Fetch with a GET method the Todos list from the API
+		const response = await fetch(baseUrl, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+		return response;
+	}
+
+	async function getListFromAPI() {
+		// If the user exist fetch the List of Todos from the API
+		// else the user does not exist create it and get the List of Todos
+		try {
+			const response = await fetchTodosList();
+
+			if (response.ok) {
+				const body = await response.json();
+				setList(body);
+			} else {
+				createUser();
+				const response = await fetchTodosList();
+				const body = await response.json();
+				setList(body);
+			}
+		} catch (error) {
+			return null;
+		}
+	}
+
+	async function updateInfoInAPI() {
+		try {
+			const response = await fetch(baseUrl, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(list)
+			});
+		} catch (error) {
+			return null;
+		}
+	}
 
 	function handleKeyDown(e) {
-		if (e.key != "Enter") return null;
+		if (
+			e.key != "Enter" ||
+			/^\s+$/g.test(e.target.value) ||
+			e.target.value == ""
+		)
+			return null;
 
-		let auxElement = {
-			id: `e-${idCounter}`,
-			value: e.target.value
+		// When user click Enter, add a new Todo to the state/element "list"
+		// {
+		//		label: e.target.value,
+		//		done: false
+		// }
+
+		let newTodo = {
+			label: e.target.value,
+			done: false
 		};
+
 		let auxList = [...list];
-		auxList.push(auxElement);
-
-		let auxIdCounter = idCounter;
-		auxIdCounter++;
-
+		auxList.push(newTodo);
 		setList(auxList);
-		setIdCounter(auxIdCounter);
+
+		e.target.value = "";
 	}
 
-	function handleClick(id) {
-		let auxList = list.filter(element => element.id != id);
+	function handleClickDelete(id) {
+		let auxList = list.filter((element, index) => index != id);
 		setList(auxList);
 	}
+
+	function handleClickDeleteAll() {
+		setList([{ label: "All Delleted", done: false }]);
+	}
+
+	useEffect(() => {
+		// Working as "ComponentDidMount" when the list is empty
+		getListFromAPI();
+	}, []);
+
+	useEffect(() => {
+		// Make a Put Method to API because the state/element "list" changed
+		updateInfoInAPI();
+	}, [list]);
 
 	return (
 		<>
@@ -46,19 +142,32 @@ function MyCard() {
 					</Form.Group>
 				</Card.Body>
 				<ListGroup variant="flush">
-					{list.map(element => {
+					{list.map((element, index) => {
 						return (
 							<MyItem
-								key={element.id}
-								id={element.id}
-								element={element.value}
-								func={handleClick}
+								key={index}
+								id={index}
+								element={element.label}
+								handlerDelete={handleClickDelete}
 							/>
 						);
 					})}
 				</ListGroup>
 				<Card.Footer className="text-muted p-2">
-					{list.length} item left
+					<Container fluid>
+						<Row className="">
+							<Col md={"auto"}>
+								<p className="m-0">{list.length} item left</p>
+							</Col>
+							<Col md={"auto"} className="ml-auto">
+								<Button
+									variant="danger"
+									onClick={handleClickDeleteAll}>
+									Delete All
+								</Button>
+							</Col>
+						</Row>
+					</Container>
 				</Card.Footer>
 			</Card>
 			<div className="paperDesign border-top-0" id="design1"></div>
