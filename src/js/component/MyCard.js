@@ -68,6 +68,7 @@ function MyCard() {
 	}
 
 	async function updateInfoInAPI(auxList) {
+		// fetch the List of Todos to the API with the PUT method
 		try {
 			const response = await fetch(baseUrl, {
 				method: "PUT",
@@ -95,7 +96,7 @@ function MyCard() {
 			return null;
 		}
 
-		// When user click Enter, add a new Todo to the state/element "list"
+		// When user click Enter, add a new Todo to an auxList to be fetch to the API
 		// {
 		//		label: e.target.value,
 		//		done: false
@@ -115,6 +116,7 @@ function MyCard() {
 	}
 
 	function handleClickDelete(id) {
+		// Delete the element from the list to be fetch, if the list end empty it fetch a new one with only one task
 		let auxList = list.filter((element, index) => index != id);
 		if (!auxList.length) {
 			auxList.push({ label: "sample task", done: false });
@@ -124,18 +126,14 @@ function MyCard() {
 	}
 
 	function handleClickDeleteAll() {
-		setList([{ label: "sample task", done: false }]);
+		// Create a new list with only one task to be fetch to the API
+		updateInfoInAPI([{ label: "sample task", done: false }]);
 	}
 
 	useEffect(() => {
 		// Working as "ComponentDidMount" when the list is empty
 		getListFromAPI();
 	}, []);
-
-	// useEffect(() => {
-	// 	// Make a Put Method to API because the state/element "list" changed
-	// 	updateInfoInAPI();
-	// }, [list]);
 
 	return (
 		<>
