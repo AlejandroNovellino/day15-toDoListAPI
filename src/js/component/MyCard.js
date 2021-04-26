@@ -10,7 +10,7 @@ import {
 	Button,
 	Card,
 	Form,
-	ListGroup
+	ListGroup,
 } from "react-bootstrap";
 
 function MyCard() {
@@ -26,9 +26,9 @@ function MyCard() {
 				const response = await fetch(baseUrl, {
 					method: "POST",
 					headers: {
-						"Content-Type": "application/json"
+						"Content-Type": "application/json",
 					},
-					body: JSON.stringify([])
+					body: JSON.stringify([]),
 				});
 			} catch (error) {
 				return null;
@@ -41,8 +41,8 @@ function MyCard() {
 		const response = await fetch(baseUrl, {
 			method: "GET",
 			headers: {
-				"Content-Type": "application/json"
-			}
+				"Content-Type": "application/json",
+			},
 		});
 		return response;
 	}
@@ -73,9 +73,9 @@ function MyCard() {
 			const response = await fetch(baseUrl, {
 				method: "PUT",
 				headers: {
-					"Content-Type": "application/json"
+					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(auxList)
+				body: JSON.stringify(auxList),
 			});
 			if (response.ok) {
 				getListFromAPI();
@@ -104,7 +104,7 @@ function MyCard() {
 
 		let newTodo = {
 			label: e.target.value,
-			done: false
+			done: false,
 		};
 
 		let auxList = [...list];
