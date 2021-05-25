@@ -10,14 +10,16 @@ import {
 	Button,
 	Card,
 	Form,
-	ListGroup,
+	ListGroup
 } from "react-bootstrap";
 
 function MyCard() {
 	let [list, setList] = useState([]);
 
 	const user = "DaniilTorpedoKvyat";
-	const baseUrl = "https://assets.breatheco.de/apis/fake/todos/user/" + user;
+	const endpoint = "todos";
+	const baseUrl =
+		"https://3245-crimson-ant-zxko4gd1.ws-us07.gitpod.io/" + endpoint;
 
 	async function createUser() {
 		// Create the user if the "getListFromAPI" return a response with status 404
@@ -26,9 +28,9 @@ function MyCard() {
 				const response = await fetch(baseUrl, {
 					method: "POST",
 					headers: {
-						"Content-Type": "application/json",
+						"Content-Type": "application/json"
 					},
-					body: JSON.stringify([]),
+					body: JSON.stringify([])
 				});
 			} catch (error) {
 				return null;
@@ -41,10 +43,13 @@ function MyCard() {
 		const response = await fetch(baseUrl, {
 			method: "GET",
 			headers: {
-				"Content-Type": "application/json",
-			},
+				"Content-Type": "application/json"
+			}
 		});
-		return response;
+		const body = await response.json();
+		setList(body);
+
+		return body;
 	}
 
 	async function getListFromAPI() {
@@ -53,29 +58,29 @@ function MyCard() {
 		try {
 			const response = await fetchTodosList();
 
-			if (response.ok) {
-				const body = await response.json();
-				setList(body);
-			} else {
-				await createUser();
-				const response = await fetchTodosList();
-				const body = await response.json();
-				setList(body);
-			}
+			// if (response.ok) {
+			// 	const body = await response.json();
+			// 	setList(body);
+			// } else {
+			// 	await createUser();
+			// 	const response = await fetchTodosList();
+			// 	const body = await response.json();
+			// 	setList(body);
+			// }
 		} catch (error) {
 			return null;
 		}
 	}
 
-	async function updateInfoInAPI(auxList) {
+	async function updateInfoInAPI(todo) {
 		// fetch the List of Todos to the API with the PUT method
 		try {
 			const response = await fetch(baseUrl, {
-				method: "PUT",
+				method: "POST",
 				headers: {
-					"Content-Type": "application/json",
+					"Content-Type": "application/json"
 				},
-				body: JSON.stringify(auxList),
+				body: JSON.stringify(todo)
 			});
 			if (response.ok) {
 				getListFromAPI();
@@ -104,25 +109,49 @@ function MyCard() {
 
 		let newTodo = {
 			label: e.target.value,
-			done: false,
+			done: false
 		};
 
-		let auxList = [...list];
-		auxList.push(newTodo);
-
-		updateInfoInAPI(auxList);
+		updateInfoInAPI(newTodo);
 
 		e.target.value = "";
 	}
 
+	const auxDelete = async id => {
+		const response = await fetch(baseUrl + "/" + id, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+
+		if (response.ok) {
+			getListFromAPI();
+		} else {
+			return null;
+		}
+	};
+
 	function handleClickDelete(id) {
 		// Delete the element from the list to be fetch, if the list end empty it fetch a new one with only one task
-		let auxList = list.filter((element, index) => index != id);
-		if (!auxList.length) {
-			auxList.push({ label: "sample task", done: false });
-		}
+		let todoToDelete = list.filter((element, index) => index == id);
+		auxDelete(todoToDelete);
+		// if (!auxList.length) {
+		// 	auxList.push({ label: "sample task", done: false });
+		// }
 
-		updateInfoInAPI(auxList);
+		// const response = fetch(baseUrl + "/" + id, {
+		// 	method: "DELETE",
+		// 	headers: {
+		// 		"Content-Type": "application/json"
+		// 	}
+		// });
+
+		// if (response.ok) {
+		// 	getListFromAPI();
+		// } else {
+		// 	return null;
+		// }
 	}
 
 	function handleClickDeleteAll() {
@@ -167,13 +196,7 @@ function MyCard() {
 							<Col md={"auto"}>
 								<p className="m-0">{list.length} item left</p>
 							</Col>
-							<Col md={"auto"} className="ml-auto">
-								<Button
-									variant="danger"
-									onClick={handleClickDeleteAll}>
-									Delete All
-								</Button>
-							</Col>
+							<Col md={"auto"} className="ml-auto"></Col>
 						</Row>
 					</Container>
 				</Card.Footer>
